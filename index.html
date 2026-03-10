@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Causeway Monitoring Wall</title>
+  <title>لوحة مراقبة الجسر</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     :root {
@@ -47,7 +47,7 @@
       border-radius: 18px;
       padding: 20px;
       display: grid;
-      grid-template-rows: auto auto 1fr;
+      grid-template-rows: auto 1fr; /* remove extra vertical space */
       gap: 20px;
       overflow: hidden;
     }
@@ -73,6 +73,7 @@
       justify-content: space-between;
       gap: 18px;
       min-height: 92px;
+      direction: rtl;
     }
 
     .brand-left {
@@ -173,8 +174,10 @@
       width: 100%;
       height: 100%;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
       gap: 18px;
+      direction: ltr;
     }
 
     .camera-card {
@@ -194,6 +197,7 @@
       padding: 14px 16px;
       border-bottom: 1px solid var(--line);
       background: #ffffff;
+      direction: rtl;
     }
 
     .camera-title-wrap {
@@ -301,6 +305,7 @@
       justify-content: space-between;
       gap: 12px;
       pointer-events: none;
+      direction: rtl;
     }
 
     .footer-panel {
@@ -349,37 +354,14 @@
         <div class="brand-left">
           <div class="logo-badge">🎛️</div>
           <div>
-            <h1>Causeway Live Monitoring Center</h1>
-            <p>Real-time border flow streams for Saudi and Bahrain lanes</p>
+            <h1>مركز المراقبة المباشرة للجسر</h1>
+            <p>بث مباشر لحركة العبور بين السعودية والبحرين</p>
           </div>
         </div>
         <div class="live-pill">
           <span class="live-dot"></span>
-          <span>Live Monitoring</span>
+          <span>بث مباشر</span>
         </div>
-      </div>
-    </div>
-
-    <div class="summary-grid">
-      <div class="summary-card">
-        <div class="summary-label">Active Streams</div>
-        <div class="summary-value">4 / 4</div>
-        <div class="summary-sub">All channels connected</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Saudi Side</div>
-        <div class="summary-value">2 Feeds</div>
-        <div class="summary-sub">Arrival and departure</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Bahrain Side</div>
-        <div class="summary-value">2 Feeds</div>
-        <div class="summary-sub">Arrival and departure</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">Display Mode</div>
-        <div class="summary-value">Video Wall</div>
-        <div class="summary-sub clock" id="clock">--:--:--</div>
       </div>
     </div>
 
@@ -390,38 +372,38 @@
     const streams = [
       {
         id: 1,
-        name: 'Saudi Arrival',
-        sub: 'Inbound traffic lane',
+        name: 'وصول السعودية',
+        sub: 'مسار الدخول',
         icon: '🇸🇦',
-        zone: 'Saudi',
-        mode: 'Arrival',
+        zone: 'السعودية',
+        mode: 'وصول',
         url: 'https://addy.gooick.com/sa/main/output.m3u8?signature=4a335e7ca723824049947ce7951cfe938602840fb30a7498c017dd0811ae6176&t=1773138978&no_ad=true'
       },
       {
         id: 2,
-        name: 'Saudi Departure',
-        sub: 'Outbound traffic lane',
+        name: 'مغادرة السعودية',
+        sub: 'مسار الخروج',
         icon: '🇸🇦',
-        zone: 'Saudi',
-        mode: 'Departure',
+        zone: 'السعودية',
+        mode: 'مغادرة',
         url: 'https://addy.gooick.com/sd/main/output.m3u8?signature=058c2a97d60881e0cde5332ce1d7fe318df7e5d5dca59c55846fbb45e3d599c2&t=1773138978&no_ad=true'
       },
       {
         id: 3,
-        name: 'Bahrain Arrival',
-        sub: 'Inbound traffic lane',
+        name: 'وصول البحرين',
+        sub: 'مسار الدخول',
         icon: '🇧🇭',
-        zone: 'Bahrain',
-        mode: 'Arrival',
+        zone: 'البحرين',
+        mode: 'وصول',
         url: 'https://addy.gooick.com/ba/main/output.m3u8?signature=766c107e11766855175407f1bea7849ed39408c2e3eb012a45aec224bc171bda&t=1773138978&no_ad=true'
       },
       {
         id: 4,
-        name: 'Bahrain Departure',
-        sub: 'Outbound traffic lane',
+        name: 'مغادرة البحرين',
+        sub: 'مسار الخروج',
         icon: '🇧🇭',
-        zone: 'Bahrain',
-        mode: 'Departure',
+        zone: 'البحرين',
+        mode: 'مغادرة',
         url: 'https://addy.gooick.com/bd/main/output.m3u8?signature=e76836599d7dee83b1a12071facd84dbedc8abfc9b1cbe6e9baeb2b02a4d4316&t=1773138978&no_ad=true'
       }
     ];
@@ -444,7 +426,7 @@
               </div>
             </div>
             <div class="camera-badges">
-              <span class="badge"><span class="badge-dot"></span>LIVE</span>
+              <span class="badge"><span class="badge-dot"></span>مباشر</span>
               <span class="badge">${stream.zone}</span>
               <span class="badge">${stream.mode}</span>
             </div>
@@ -454,7 +436,7 @@
             <div class="camera-footer">
               <div class="footer-panel">
                 <span class="signal-bars"><i></i><i></i><i></i><i></i></span>
-                <span>Stable signal</span>
+                <span>إشارة مستقرة</span>
               </div>
               <div class="footer-panel">${stream.name}</div>
             </div>
@@ -480,17 +462,8 @@
         video.src = url;
       }
     }
-
-    function updateClock() {
-      const el = document.getElementById('clock');
-      const now = new Date();
-      el.textContent = now.toLocaleTimeString([], { hour12: false });
-    }
-
     buildCards();
     streams.forEach((stream) => loadStream(`video-${stream.id}`, stream.url));
-    updateClock();
-    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
