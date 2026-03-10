@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة مراقبة الجسر</title>
+<title>Camera Stream Debug</title>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -11,22 +11,78 @@
 
 <body>
 
-<h2>بث الكاميرا</h2>
+<h2>Live Camera Debug</h2>
 
-<video id="video" controls width="600"></video>
+<video id="video" width="700" controls autoplay muted playsinline></video>
 
 <script>
-var video = document.getElementById('video');
-var videoSrc = "https://addy.gooick.com//sa//main//output.m3u8?signature=ec35a78bd30c12cce6d84cf5f0edcb99aa00ff341b1894ffcb0f31fd5e51092f&t=1773143691&no_ad=true";
+
+const video = document.getElementById('video');
+
+const videoSrc = "https://addy.gooick.com/ba/main/output.m3u8?signature=766c107e11766855175407f1bea7849ed39408c2e3eb012a45aec224bc171bda&t=1773138978&no_ad=true";
+
+console.log("Video source:", videoSrc);
+
+video.crossOrigin = "anonymous";
 
 if (Hls.isSupported()) {
-  var hls = new Hls();
-  hls.loadSource(videoSrc);
-  hls.attachMedia(video);
+
+    console.log("HLS supported");
+
+    const hls = new Hls({
+        debug: true
+    });
+
+    hls.loadSource(videoSrc);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+        console.log("Media attached");
+    });
+
+    hls.on(Hls.Events.MANIFEST_LOADING, function () {
+        console.log("Manifest loading...");
+    });
+
+    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+        console.log("Manifest parsed:", data);
+
+        video.play()
+        .then(() => console.log("Video playing"))
+        .catch(err => console.log("Play error:", err));
+
+    });
+
+    hls.on(Hls.Events.ERROR, function (event, data) {
+        console.error("HLS error:", data);
+    });
+
+    video.addEventListener("error", function () {
+        console.error("Video element error:", video.error);
+    });
+
 } 
 else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-  video.src = videoSrc;
+
+    console.log("Native HLS supported");
+
+    video.src = videoSrc;
+
+    video.addEventListener("loadedmetadata", function () {
+
+        video.play()
+        .then(() => console.log("Native video playing"))
+        .catch(err => console.log("Native play error:", err));
+
+    });
+
 }
+else {
+
+    console.error("HLS not supported in this browser");
+
+}
+
 </script>
 
 </body>
