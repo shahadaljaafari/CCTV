@@ -1,11 +1,33 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة مراقبة الجسر</title>
-  <script src="https://addy.gooick.com//sa//main//output.m3u8?signature=ec35a78bd30c12cce6d84cf5f0edcb99aa00ff341b1894ffcb0f31fd5e51092f&t=1773143691&no_ad=true"></script>
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة مراقبة الجسر</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+</head>
+
+<body>
+
+<h2>بث الكاميرا</h2>
+
+<video id="video" controls width="600"></video>
+
+<script>
+var video = document.getElementById('video');
+var videoSrc = "https://addy.gooick.com//sa//main//output.m3u8?signature=ec35a78bd30c12cce6d84cf5f0edcb99aa00ff341b1894ffcb0f31fd5e51092f&t=1773143691&no_ad=true";
+
+if (Hls.isSupported()) {
+  var hls = new Hls();
+  hls.loadSource(videoSrc);
+  hls.attachMedia(video);
+} 
+else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+  video.src = videoSrc;
+}
+</script>
+
 </body>
 </html>
