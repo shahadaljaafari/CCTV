@@ -12,11 +12,7 @@
 
   <script>
     const video = document.getElementById("video");
-
-    // هذا صار يشير إلى سيرفرك أنت
-    const videoSrc = "http://localhost:3000/proxy/m3u8";
-
-    console.log("Proxy video source:", videoSrc);
+    const videoSrc = "https://cctv-307p.onrender.com/proxy/m3u8";
 
     if (Hls.isSupported()) {
       const hls = new Hls({ debug: true });
