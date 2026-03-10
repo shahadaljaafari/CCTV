@@ -47,7 +47,7 @@
       border-radius: 18px;
       padding: 20px;
       display: grid;
-      grid-template-rows: auto 1fr; /* remove extra vertical space */
+      grid-template-rows: auto 1fr;
       gap: 20px;
       overflow: hidden;
     }
@@ -130,43 +130,6 @@
       background: var(--success);
       box-shadow: 0 0 0 0 rgba(75, 143, 59, 0.75);
       animation: pulse 2s infinite;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .summary-card {
-      border-radius: var(--radius-lg);
-      padding: 16px 18px;
-      min-height: 86px;
-    }
-
-    .summary-label {
-      color: var(--muted);
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .summary-value {
-      margin-top: 10px;
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .summary-sub {
-      margin-top: 6px;
-      font-size: 0.86rem;
-      color: var(--muted);
-    }
-
-    .clock {
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.06em;
     }
 
     .wall {
@@ -369,7 +332,9 @@
   </div>
 
   <script>
-    const streams = [
+    const PROXY_BASE = 'https://cctv-307p.onrender.com/proxy/m3u8?url=';
+
+    const rawStreams = [
       {
         id: 1,
         name: 'وصول السعودية',
@@ -377,7 +342,7 @@
         icon: '🇸🇦',
         zone: 'السعودية',
         mode: 'وصول',
-        url: 'https://addy.gooick.com/sa/main/output.m3u8?signature=4a335e7ca723824049947ce7951cfe938602840fb30a7498c017dd0811ae6176&t=1773138978&no_ad=true'
+        rawUrl: 'https://addy.gooick.com/sa/main/output.m3u8?signature=4a335e7ca723824049947ce7951cfe938602840fb30a7498c017dd0811ae6176&t=1773138978&no_ad=true'
       },
       {
         id: 2,
@@ -386,7 +351,7 @@
         icon: '🇸🇦',
         zone: 'السعودية',
         mode: 'مغادرة',
-        url: 'https://addy.gooick.com/sd/main/output.m3u8?signature=058c2a97d60881e0cde5332ce1d7fe318df7e5d5dca59c55846fbb45e3d599c2&t=1773138978&no_ad=true'
+        rawUrl: 'https://addy.gooick.com/sd/main/output.m3u8?signature=058c2a97d60881e0cde5332ce1d7fe318df7e5d5dca59c55846fbb45e3d599c2&t=1773138978&no_ad=true'
       },
       {
         id: 3,
@@ -395,7 +360,7 @@
         icon: '🇧🇭',
         zone: 'البحرين',
         mode: 'وصول',
-        url: 'https://addy.gooick.com/ba/main/output.m3u8?signature=766c107e11766855175407f1bea7849ed39408c2e3eb012a45aec224bc171bda&t=1773138978&no_ad=true'
+        rawUrl: 'https://addy.gooick.com/ba/main/output.m3u8?signature=766c107e11766855175407f1bea7849ed39408c2e3eb012a45aec224bc171bda&t=1773138978&no_ad=true'
       },
       {
         id: 4,
@@ -404,9 +369,14 @@
         icon: '🇧🇭',
         zone: 'البحرين',
         mode: 'مغادرة',
-        url: 'https://addy.gooick.com/bd/main/output.m3u8?signature=e76836599d7dee83b1a12071facd84dbedc8abfc9b1cbe6e9baeb2b02a4d4316&t=1773138978&no_ad=true'
+        rawUrl: 'https://addy.gooick.com/bd/main/output.m3u8?signature=e76836599d7dee83b1a12071facd84dbedc8abfc9b1cbe6e9baeb2b02a4d4316&t=1773138978&no_ad=true'
       }
     ];
+
+    const streams = rawStreams.map(stream => ({
+      ...stream,
+      url: PROXY_BASE + encodeURIComponent(stream.rawUrl)
+    }));
 
     const wall = document.getElementById('wall');
 
@@ -456,12 +426,22 @@
           lowLatencyMode: true,
           backBufferLength: 90,
         });
+
         hls.loadSource(url);
         hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+          video.play().catch(err => console.log(`Play error (${videoId}):`, err));
+        });
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          console.error(`HLS error (${videoId}):`, data);
+        });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
       }
     }
+
     buildCards();
     streams.forEach((stream) => loadStream(`video-${stream.id}`, stream.url));
   </script>
